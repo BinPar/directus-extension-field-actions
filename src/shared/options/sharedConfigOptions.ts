@@ -2,7 +2,6 @@ import { DisplayConfig, Collection, DeepPartial } from '@directus/shared/types';
 
 
 export function getSharedConfigOptions(isString: boolean, collection?: DeepPartial<Collection>) {
-  console.log({ collection })
   const options: DisplayConfig['options'] = [
     {
       field: 'groupCopySettings',
