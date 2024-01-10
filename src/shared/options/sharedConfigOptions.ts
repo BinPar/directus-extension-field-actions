@@ -1,6 +1,7 @@
 import { DisplayConfig, Collection, DeepPartial } from '@directus/shared/types';
 
 
+
 export function getSharedConfigOptions(isString: boolean, collection?: DeepPartial<Collection>) {
   const options: DisplayConfig['options'] = [
     {
