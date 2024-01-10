@@ -2,18 +2,8 @@
 
 <template>
 	<div class="action-interface">
-		<v-input 
-			:model-value="value" 
-			:disabled="disabled"
-			:type="inputType"
-			:placeholder="placeholder"
-			:min="min"
-			:max="max"
-			:step="step"
-			v-tooltip="actionTooltip"
-			@update:model-value="$emit('input', $event)"
-			@click="valueClickAction"
-		>
+		<v-input :model-value="computedCopyValue" :disabled="true" :type="inputType" :placeholder="placeholder" :min="min" :max="max"
+			:step="step" v-tooltip="actionTooltip" @update:model-value="$emit('input', $event)" @click="valueClickAction">
 			<template v-if="iconLeft" #prepend>
 				<v-icon :name="iconLeft" />
 			</template>
@@ -23,56 +13,41 @@
 			</template>
 		</v-input>
 
-		<v-button
-			v-if="showCopy && isCopySupported"
-			:disabled="!value"
-			v-tooltip="value ? `Copy: ${computedCopyValue}` : `Can't copy empty value`"
-			icon
-			secondary
-			xLarge
-			:class="copyPosition === 'start' ? '-order-1' : 'order-1'"
-		>
-			<v-icon
-				name="content_copy"
-				@click.stop="copyValue"
-			/>
+		<v-button @click.stop="copyValue" v-if="showCopy && isCopySupported" :disabled="!value"
+			v-tooltip="value ? `Copy: ${computedCopyValue}` : `Can't copy empty value`" icon secondary xLarge
+			:class="copyPosition === 'start' ? '-order-1' : 'order-1'">
+			<v-icon name="content_copy" />
 		</v-button>
-		
+
 
 		<!-- TODO: button supports :to=routerLink and :href=custom link. Switch from custom a-tag to those. Use condition: href for full url and "to" for internal links (incomplete url)  -->
-		<v-button
-			v-if="showLink"
-			:disabled="!value"
-			v-tooltip="value ? `Follow link: ${computedLink}` : `Can't follow empty link`"
-			icon
-			secondary
-			xLarge
-			:class="linkPosition === 'start' ? '-order-1' : 'order-1'"
-		>
-			<a 
-				:href="computedLink"
-				:target="openLinkAsNewTab ? '_blank' : '_self'"
-				rel="noopener noreferrer"
-				@click.stop
-			>
-				<v-icon 
-					name="open_in_new"
-				/>
+		<v-button v-if="showLink" :disabled="!value"
+			v-tooltip="value ? `Follow link: ${computedLink}` : `Can't follow empty link`" icon secondary xLarge
+			:class="linkPosition === 'start' ? '-order-1' : 'order-1'">
+			<a :href="computedLink" :target="openLinkAsNewTab ? '_blank' : '_self'" rel="noopener noreferrer" @click.stop>
+				<v-icon name="open_in_new" />
 			</a>
 		</v-button>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, inject, ref, watch } from 'vue';
 import { useClipboard } from '../shared/composable/use-clipboard';
 import { usePrefixedValues } from '../shared/composable/use-prefixed-values';
 import { useStores } from '@directus/extensions-sdk';
+import { render } from 'micromustache';
+import slugify from '@sindresorhus/slugify'
 
 const props = defineProps({
 	value: {
 		type: [String, Number],
 		default: null,
+	},
+	field: {
+		type: String,
+		default: null,
+		required: true,
 	},
 	clickAction: {
 		type: String,
@@ -126,6 +101,14 @@ const props = defineProps({
 		type: Number,
 		default: 1,
 	},
+	relationCollection: {
+		type: String,
+		default: null,
+	},
+	template: {
+		type: String,
+		default: null,
+	},
 	// global optiopns (independend from this interface)
 	type: {
 		type: String,
@@ -135,21 +118,47 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
-  openLinkAsNewTab: {
-    type: Boolean,
-    default: true
-  }
+	openLinkAsNewTab: {
+		type: Boolean,
+		default: true
+	},
+
 });
 
 const emit = defineEmits(['input']);
+const values = inject('values', ref<Record<string, any>>({}));
+
 
 const { isCopySupported, copyToClipboard } = useClipboard();
 
 const { useNotificationsStore } = useStores();
-const notificationStore = useNotificationsStore();	
+const notificationStore = useNotificationsStore();
+
+watch(values, (values: Record<string, any>) => {
+	// Avoid self update.
+	if (values[props.field] && ((values[props.field] || '') !== (props.value || ''))) return;
+	emitter(values);
+});
+
+function transform(value: string) {
+	return slugify(value || '', { separator: '-', preserveCharacters: ['?', '/', '=', ':'] })
+}
+
+function emitter(values: Record<string, any>) {
+	const valueRender = render(props.template || '', values);
+	const newValue = transform(valueRender);
+	if (newValue === (props.value || '')) return;
+
+
+	if (newValue === '') {
+		emit('input', 'slug');
+		return;
+	};
+
+	emit('input', newValue)
+}
 
 const { computedLink, computedCopyValue } = usePrefixedValues(props);
-
 
 const inputType = computed(() => {
 	if (['bigInteger', 'integer', 'float', 'decimal'].includes(props.type)) return 'number';
@@ -167,13 +176,13 @@ function valueClickAction(e: Event) {
 	if (props.clickAction === 'copy' && props.disabled && props.value) {
 		e.stopPropagation();
 		copyValue();
-	} 
+	}
 
 	if (props.clickAction === 'link' && props.disabled && props.value) {
 		e.stopPropagation();
 		window.open(computedLink.value, '_blank', 'noopener, noreferrer');
 	}
-	
+
 	// else go on with the default events
 }
 
@@ -185,8 +194,6 @@ const actionTooltip = computed(() => {
 });
 
 </script>
-
-
 
 
 <style scoped lang="scss">
@@ -208,5 +215,7 @@ const actionTooltip = computed(() => {
 			margin-right: 8px;
 		}
 	}
+
+	
 }
 </style>

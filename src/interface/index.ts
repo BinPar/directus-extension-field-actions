@@ -8,14 +8,17 @@ export default defineInterface({
 	icon: 'ads_click',
 	description: 'Display content with actions like linking or copy to clipboard. (By clicking on the content (only at readonly) and seperate buttons)! NOTE: the content needs to match the schema',
 	component: InterfaceComponent,
+	// fields: ['*'],
 	types: ['uuid', 'string', 'text', 'bigInteger', 'integer', 'decimal', 'float'],
-	options: ({ field  }): any => {
+	options: ({ field, collection }): any => {
+
 		const isStringField 	= ['string', 'text'].includes(field.type ?? 'unknown');
 		const isNumericField 	= ['bigInteger', 'integer', 'float', 'decimal'].includes(field.type ?? 'unknown');
 
-		const sharedOptions = getSharedConfigOptions(isStringField);
+		const sharedOptions = getSharedConfigOptions(isStringField, collection);
 		// TODO: add custom options: softLength, clear, font
 		
+
 		const interfaceOptions = [
 			{
 				field: 'placeholder',

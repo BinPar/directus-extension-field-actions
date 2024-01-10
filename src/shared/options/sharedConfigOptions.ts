@@ -1,7 +1,8 @@
-import { DisplayConfig } from '@directus/shared/types';
+import { DisplayConfig, Collection, DeepPartial } from '@directus/shared/types';
 
 
-export function getSharedConfigOptions(isString: boolean) {
+export function getSharedConfigOptions(isString: boolean, collection?: DeepPartial<Collection>) {
+  console.log({ collection })
   const options: DisplayConfig['options'] = [
     {
       field: 'groupCopySettings',
@@ -170,7 +171,26 @@ export function getSharedConfigOptions(isString: boolean) {
     },
   ];
 
-  return options;
+  const relationalTextOptions = [
+    {
+      field: 'template',
+      type: 'string',
+      name: '$t:template',
+      meta: {
+        group: 'groupCopySettings',
+        interface: 'system-display-template',
+        width: 'half',
+        options: {
+          collectionName: collection,
+        },
+      },
+    },
+  ]
+
+  return [
+    ...options,
+    ...(isString ? relationalTextOptions : [])
+  ];
 }
 
 

@@ -14,7 +14,7 @@
 				:class="hasValueClickAction ? 'action-background' : ''"
 				@click="valueClickAction"
 			>
-				{{ value }}
+				{{ computedCopyValue }}
 			</span>
 		</component>
 		
