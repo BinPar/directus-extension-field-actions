@@ -7,12 +7,12 @@ export function usePrefixedValues(props: any) {
 
   const computedLink = computed(() => {
     const prefix = usePrefix(props.linkPrefix);
-    return prefix.value + props.value;
+    return prefix.value + (props.value || '');
   });
 
   const computedCopyValue = computed(() => { 
     const prefix = usePrefix(props.copyPrefix);
-    return prefix.value + props.value;
+    return prefix.value + (props.value||'');
   });
 
   return { computedLink, computedCopyValue };

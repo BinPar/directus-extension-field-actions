@@ -135,12 +135,14 @@ const { useNotificationsStore } = useStores();
 const notificationStore = useNotificationsStore();
 
 watch(values, (values: Record<string, any>) => {
+	console.log('im here', values, props.field, values[props.field], props.value);
 	// Avoid self update.
 	if (values[props.field] && ((values[props.field] || '') !== (props.value || ''))) return;
 	emitter(values);
 });
 
 function transform(value: string) {
+	console.log({value})
 	return slugify(value || '', { separator: '-', preserveCharacters: ['?', '/', '=', ':'] })
 }
 
@@ -151,7 +153,7 @@ function emitter(values: Record<string, any>) {
 
 
 	if (newValue === '') {
-		emit('input', 'slug');
+		emit('input', 'text');
 		return;
 	};
 
@@ -191,6 +193,7 @@ function valueClickAction(e: Event) {
 const actionTooltip = computed(() => {
 	if (props.clickAction === 'copy' && isCopySupported) return 'Copy value';
 	if (props.clickAction === 'link') return 'Open link';
+	return '';
 });
 
 </script>
