@@ -3,7 +3,7 @@
 <template>
 	<div class="action-interface">
 		<v-input :model-value="computedCopyValue" :disabled="true" :type="inputType" :placeholder="placeholder" :min="min" :max="max"
-			:step="step" v-tooltip="actionTooltip" @update:model-value="$emit('input', $event)" @click="valueClickAction">
+			:step="step" v-tooltip="actionTooltip" @click="valueClickAction">
 			<template v-if="iconLeft" #prepend>
 				<v-icon :name="iconLeft" />
 			</template>
@@ -128,29 +128,47 @@ const props = defineProps({
 const emit = defineEmits(['input']);
 const values = inject('values', ref<Record<string, any>>({}));
 
-
 const { isCopySupported, copyToClipboard } = useClipboard();
 
 const { useNotificationsStore } = useStores();
 const notificationStore = useNotificationsStore();
 
-watch(values, (values: Record<string, any>) => {
-	console.log('im here', values, props.field, values[props.field], props.value);
-	// Avoid self update.
-	if (values[props.field] && ((values[props.field] || '') !== (props.value || ''))) return;
+watch(values, debounce((values: Record<string, any>) => {
+	console.log('Estoy enviando información')
 	emitter(values);
-});
+}, 200, false));
 
 function transform(value: string) {
-	console.log({value})
 	return slugify(value || '', { separator: '-', preserveCharacters: ['?', '/', '=', ':'] })
 }
+
+function debounce(func, wait, immediate) {
+			let timeout;
+
+			return function () {
+				const context = this, args = arguments;
+
+				const later = function () {
+					timeout = null;
+					if (!immediate) func.apply(context, args);
+				};
+
+				const callNow = immediate && !timeout;
+
+				clearTimeout(timeout);
+				timeout = setTimeout(later, wait);
+
+				if (callNow) func.apply(context, args);
+			};
+		}
 
 function emitter(values: Record<string, any>) {
 	const valueRender = render(props.template || '', values);
 	const newValue = transform(valueRender);
-	if (newValue === (props.value || '')) return;
 
+	console.log({ newValue, valueRender, values })
+
+	if (newValue === (props.value || '')) return;
 
 	if (newValue === '') {
 		emit('input', 'text');
