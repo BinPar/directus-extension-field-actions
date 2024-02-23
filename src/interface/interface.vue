@@ -2,8 +2,8 @@
 
 <template>
 	<div class="action-interface">
-		<v-input :model-value="computedCopyValue" :disabled="true" :type="inputType" :placeholder="placeholder" :min="min" :max="max"
-			:step="step" v-tooltip="actionTooltip" @click="valueClickAction">
+		<v-input :model-value="computedCopyValue" :disabled="true" :type="inputType" :placeholder="placeholder" :min="min"
+			:max="max" :step="step" v-tooltip="actionTooltip" @click="valueClickAction">
 			<template v-if="iconLeft" #prepend>
 				<v-icon :name="iconLeft" />
 			</template>
@@ -143,27 +143,27 @@ function transform(value: string) {
 }
 
 function debounce(func, wait, immediate) {
-			let timeout;
+	let timeout;
 
-			return function () {
-				const context = this, args = arguments;
+	return function () {
+		const context = this, args = arguments;
 
-				const later = function () {
-					timeout = null;
-					if (!immediate) func.apply(context, args);
-				};
+		const later = function () {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
 
-				const callNow = immediate && !timeout;
+		const callNow = immediate && !timeout;
 
-				clearTimeout(timeout);
-				timeout = setTimeout(later, wait);
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
 
-				if (callNow) func.apply(context, args);
-			};
-		}
+		if (callNow) func.apply(context, args);
+	};
+}
 
 function emitter(values: Record<string, any>) {
-	const valueRender = render(props.template || '', values);
+	const valueRender = render(props.template || `${props.value}`, values);
 	const newValue = transform(valueRender);
 
 	console.log({ newValue, valueRender, values })
@@ -237,6 +237,6 @@ const actionTooltip = computed(() => {
 		}
 	}
 
-	
+
 }
 </style>
