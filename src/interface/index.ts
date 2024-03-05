@@ -1,14 +1,14 @@
 import { defineInterface } from '@directus/extensions-sdk';
-import InterfaceComponent from './interface.vue';
 import { getSharedConfigOptions, getClickActionChoices } from '../shared/options/sharedConfigOptions';
+
+import InterfaceComponent from './interface.vue';
 
 export default defineInterface({
 	id: 'field-actions',
 	name: 'Action interface',
 	icon: 'ads_click',
-	description: 'Display content with actions like linking or copy to clipboard. (By clicking on the content (only at readonly) and seperate buttons)! NOTE: the content needs to match the schema',
+	description: 'Display content with actions like linking or copy to clipboard.',
 	component: InterfaceComponent,
-	// fields: ['*'],
 	types: ['uuid', 'string', 'text', 'bigInteger', 'integer', 'decimal', 'float'],
 	options: ({ field, collection }): any => {
 
@@ -16,8 +16,7 @@ export default defineInterface({
 		const isNumericField 	= ['bigInteger', 'integer', 'float', 'decimal'].includes(field.type ?? 'unknown');
 
 		const sharedOptions = getSharedConfigOptions(isStringField, collection);
-		// TODO: add custom options: softLength, clear, font
-		
+
 		const interfaceOptions = [
 			{
 				field: 'placeholder',

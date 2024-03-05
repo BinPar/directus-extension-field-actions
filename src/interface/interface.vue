@@ -37,6 +37,7 @@ import { usePrefixedValues } from '../shared/composable/use-prefixed-values';
 import { useStores } from '@directus/extensions-sdk';
 import { render } from 'micromustache';
 import slugify from '@sindresorhus/slugify'
+import { debounce } from 'lodash';
 
 const props = defineProps({
 	value: {
@@ -54,7 +55,7 @@ const props = defineProps({
 	},
 	showCopy: {
 		type: Boolean,
-		default: false,
+		default: true,
 	},
 	copyPosition: {
 		type: String,
@@ -134,37 +135,15 @@ const notificationStore = useNotificationsStore();
 
 watch(values, debounce((values: Record<string, any>) => {
 	emitter(values);
-}, 200, false));
+}, 200));
 
 function transform(value: string) {
 	return slugify(value || '', { separator: '-', preserveCharacters: ['?', '/', '=', ':'] })
 }
 
-function debounce(func, wait, immediate) {
-	let timeout;
-
-	return function () {
-		const context = this, args = arguments;
-
-		const later = function () {
-			timeout = null;
-			if (!immediate) func.apply(context, args);
-		};
-
-		const callNow = immediate && !timeout;
-
-		clearTimeout(timeout);
-		timeout = setTimeout(later, wait);
-
-		if (callNow) func.apply(context, args);
-	};
-}
-
 function emitter(values: Record<string, any>) {
 	const valueRender = render(props.template || `${props.value}`, values);
 	const newValue = transform(valueRender);
-
-	console.log({ newValue, valueRender, values })
 
 	if (newValue === (props.value || '')) return;
 

@@ -1,7 +1,5 @@
 import { DisplayConfig } from '@directus/extensions';
 
-
-
 export function getSharedConfigOptions(isString: boolean, collection?: string) {
   const options: DisplayConfig['options'][] = [
     {
@@ -13,8 +11,8 @@ export function getSharedConfigOptions(isString: boolean, collection?: string) {
         interface: 'group-detail',
         special: ['alias', 'no-data', 'group'], // NOTE: NEEDED FOR ALIAS!
         options: {
-          start: "closed",
-          headerIcon: "content_copy",
+          start: 'closed',
+          headerIcon: 'content_copy',
         },
       },
     },
@@ -27,8 +25,8 @@ export function getSharedConfigOptions(isString: boolean, collection?: string) {
         interface: 'group-detail',
         special: ['alias', 'no-data', 'group'], // NOTE: NEEDED FOR ALIAS!
         options: {
-          start: "closed",
-          headerIcon: "open_in_new",
+          start: 'closed',
+          headerIcon: 'open_in_new',
         },
       },
     },
@@ -58,7 +56,7 @@ export function getSharedConfigOptions(isString: boolean, collection?: string) {
         options: {
           choices: [
             { text: 'Start', value: 'start' },
-            { text: 'End', value: 'end' }
+            { text: 'End', value: 'end' },
           ],
         },
         group: 'groupCopySettings',
@@ -78,7 +76,7 @@ export function getSharedConfigOptions(isString: boolean, collection?: string) {
           placeholder: 'Enter prefix or select variable',
           choices: [
             { text: '$project_url', value: '$project_url' },
-            { text: 'https://', value: 'https://' }
+            { text: 'https://', value: 'https://' },
           ],
           allowOther: true,
           allowNone: true,
@@ -116,7 +114,7 @@ export function getSharedConfigOptions(isString: boolean, collection?: string) {
         options: {
           choices: [
             { text: 'Start', value: 'start' },
-            { text: 'End', value: 'end' }
+            { text: 'End', value: 'end' },
           ],
         },
         group: 'groupLinkSettings',
@@ -138,7 +136,7 @@ export function getSharedConfigOptions(isString: boolean, collection?: string) {
             { text: '$project_url', value: '$project_url' },
             { text: 'Mail-Link (mailto:)', value: 'mailto:' },
             { text: 'Phole-Link (tel:)', value: 'tel:' },
-            { text: 'https://', value: 'https://' }
+            { text: 'https://', value: 'https://' },
           ],
           allowOther: true,
           allowNone: true,
@@ -160,7 +158,7 @@ export function getSharedConfigOptions(isString: boolean, collection?: string) {
         options: {
           choices: [
             { text: 'As New Tab', value: true },
-            { text: 'On Current Tab', value: false }
+            { text: 'On Current Tab', value: false },
           ],
         },
         group: 'groupLinkSettings',
@@ -185,36 +183,29 @@ export function getSharedConfigOptions(isString: boolean, collection?: string) {
         },
       },
     },
-  ]
-
-  return [
-    ...options,
-    ...(isString ? relationalTextOptions : [])
   ];
+
+  return [...options, ...(isString ? relationalTextOptions : [])];
 }
 
-
-// dynamically build push Options
-// TODO: allow link only if phone, url or mail is selected
 export function getClickActionChoices(isString: boolean) {
-	const selectChoices = [
-		{
-			text: 'Copy to clipboard',
-			value: 'copy',
-		},{
-			text: 'Default click action',
-			value: 'default',
-		},
-	];
+  const selectChoices = [
+    {
+      text: 'Copy to clipboard',
+      value: 'copy',
+    },
+    {
+      text: 'Default click action',
+      value: 'default',
+    },
+  ];
 
-	if (isString) {
-		selectChoices.push(
-			{
-				text: 'Open link',
-				value: 'link',
-			},
-		);
-	}
+  if (isString) {
+    selectChoices.push({
+      text: 'Open link',
+      value: 'link',
+    });
+  }
 
-	return selectChoices;
+  return selectChoices;
 }
