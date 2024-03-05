@@ -1,9 +1,9 @@
-import { DisplayConfig, Collection, DeepPartial } from '@directus/shared/types';
+import { DisplayConfig } from '@directus/extensions';
 
 
 
-export function getSharedConfigOptions(isString: boolean, collection?: DeepPartial<Collection>) {
-  const options: DisplayConfig['options'] = [
+export function getSharedConfigOptions(isString: boolean, collection?: string) {
+  const options: DisplayConfig['options'][] = [
     {
       field: 'groupCopySettings',
       name: 'Copy item settings',
@@ -45,7 +45,7 @@ export function getSharedConfigOptions(isString: boolean, collection?: DeepParti
         group: 'groupCopySettings',
       },
       schema: {
-        default_value: false,
+        default_value: true,
       },
     },
     {

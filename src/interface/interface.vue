@@ -19,7 +19,6 @@
 			<v-icon name="content_copy" />
 		</v-button>
 
-
 		<!-- TODO: button supports :to=routerLink and :href=custom link. Switch from custom a-tag to those. Use condition: href for full url and "to" for internal links (incomplete url)  -->
 		<v-button v-if="showLink" :disabled="!value"
 			v-tooltip="value ? `Follow link: ${computedLink}` : `Can't follow empty link`" icon secondary xLarge
@@ -134,7 +133,6 @@ const { useNotificationsStore } = useStores();
 const notificationStore = useNotificationsStore();
 
 watch(values, debounce((values: Record<string, any>) => {
-	console.log('Estoy enviando información')
 	emitter(values);
 }, 200, false));
 
@@ -189,7 +187,6 @@ const inputType = computed(() => {
 async function copyValue() {
 	await copyToClipboard(`${computedCopyValue.value}`, notificationStore);
 };
-
 
 // TODO: move in composable (together with display)
 function valueClickAction(e: Event) {

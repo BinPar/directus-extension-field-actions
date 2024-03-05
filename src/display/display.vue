@@ -1,57 +1,27 @@
 <template>
 	<value-null v-if="!value" />
 	<span v-else class="action-display">
-		<component
-			v-if="!hideFieldValue"
-			:is="(clickAction === 'link') ? 'a' : 'span'" 
-			class="dynamic-wrapper"
-			:href="computedLink"
-			v-tooltip.left="actionTooltip"
-			:target="openLinkAsNewTab ? '_blank' : '_self'"
-			rel="noopener noreferrer"
-		>
-			<span 
-				:class="hasValueClickAction ? 'action-background' : ''"
-				@click="valueClickAction"
-			>
+		<component v-if="!hideFieldValue" :is="(clickAction === 'link') ? 'a' : 'span'" class="dynamic-wrapper"
+			:href="computedLink" v-tooltip.left="actionTooltip" :target="openLinkAsNewTab ? '_blank' : '_self'"
+			rel="noopener noreferrer">
+			<span :class="hasValueClickAction ? 'action-background' : ''" @click="valueClickAction">
 				{{ computedCopyValue }}
 			</span>
 		</component>
-		
-		<component
-			v-if="showCopy && isCopySupported"
-			:is="(copyButtonLabel) ? 'v-button' : 'span'" 
-			outlined
-			xSmall
-			:class="copyPosition === 'start' ? '-order-1' : 'order-1'"
-			v-tooltip="`Copy: ${computedCopyValue}`"
-			@click.stop="copyValue"
-		>
-			<v-icon 
-				name="content_copy"
-				:color="copyButtonLabel ? 'primary' : ''"
-			/>
+
+		<component v-if="showCopy && isCopySupported" :is="(copyButtonLabel) ? 'v-button' : 'span'" outlined xSmall
+			:class="copyPosition === 'start' ? '-order-1' : 'order-1'" v-tooltip="`Copy: ${computedCopyValue}`"
+			@click.stop="copyValue">
+			<v-icon name="content_copy" :color="copyButtonLabel ? 'primary' : ''" />
 
 			<span v-if="copyButtonLabel" class="ml-2">{{ copyButtonLabel }}</span>
 		</component>
-		
 
-		<component
-			v-if="showLink"
-			:is="(linkButtonLabel) ? 'v-button' : 'a'" 
-			outlined
-			xSmall
-			:href="computedLink"
-			:target="openLinkAsNewTab ? '_blank' : '_self'"
-			rel="noopener noreferrer"
-			v-tooltip="`Follow link: ${computedLink}`"
-			@click.stop
-			:class="linkPosition === 'start' ? '-order-1' : 'order-1'"
-		>
-			<v-icon 
-				name="open_in_new"
-				:color="linkButtonLabel ? 'primary' : ''"
-			/>
+
+		<component v-if="showLink" :is="(linkButtonLabel) ? 'v-button' : 'a'" outlined xSmall :href="computedLink"
+			:target="openLinkAsNewTab ? '_blank' : '_self'" rel="noopener noreferrer"
+			v-tooltip="`Follow link: ${computedLink}`" @click.stop :class="linkPosition === 'start' ? '-order-1' : 'order-1'">
+			<v-icon name="open_in_new" :color="linkButtonLabel ? 'primary' : ''" />
 			<span v-if="linkButtonLabel" class="ml-2">{{ linkButtonLabel }}</span>
 		</component>
 	</span>
@@ -119,20 +89,19 @@ const props = defineProps({
 		type: String,
 		default: '',
 	},
-  openLinkAsNewTab: {
-    type: Boolean,
-    default: true
-  }
+	openLinkAsNewTab: {
+		type: Boolean,
+		default: true
+	}
 });
 
 
 const { isCopySupported, copyToClipboard } = useClipboard();
 
 const { useNotificationsStore } = useStores();
-const notificationStore = useNotificationsStore();	
+const notificationStore = useNotificationsStore();
 
 const { computedLink, computedCopyValue } = usePrefixedValues(props);
-
 
 async function copyValue() {
 	await copyToClipboard(computedCopyValue.value, notificationStore);
@@ -144,7 +113,7 @@ function valueClickAction(e: Event) {
 	if (props.clickAction === 'copy') {
 		e.stopPropagation();
 		copyValue();
-	} 
+	}
 
 	if (props.clickAction === 'link') {
 		// We opened a link in a new tab and don't want to get into the details view of the item
@@ -173,73 +142,74 @@ const actionTooltip = computed(() => {
 
 
 <style lang="scss">
-	// NOTE: GLOBAL STYLES
-	// use scoped styles for the component whenever possible!
+// NOTE: GLOBAL STYLES
+// use scoped styles for the component whenever possible!
 
-	.header-bar .title-container {
-		// if the display is in the header bar title we need extra styling, as it has a fixed height
-		.action-display {
-			.action-background {
-				line-height: 2rem;
-				padding-top: 0;
-				padding-bottom: 0;
-			}
+.header-bar .title-container {
+
+	// if the display is in the header bar title we need extra styling, as it has a fixed height
+	.action-display {
+		.action-background {
+			line-height: 2rem;
+			padding-top: 0;
+			padding-bottom: 0;
 		}
 	}
+}
 
-	// if the display is in the render template we need to use flex on it
-	// NOTE: this could be optimized, as this way the default "text-overflow: ellapsis" from directus is not working, but it should be fine for 98% of the use-cases
-	.render-template:has(.action-display) {
-		display: flex;
-		align-items: center;
-	}
+// if the display is in the render template we need to use flex on it
+// NOTE: this could be optimized, as this way the default "text-overflow: ellapsis" from directus is not working, but it should be fine for 98% of the use-cases
+.render-template:has(.action-display) {
+	display: flex;
+	align-items: center;
+}
 </style>
 
 <style scoped lang="scss">
-	.action-display {
-		display: inline-flex;
-    flex-direction: row;
-    align-items: center;
+.action-display {
+	display: inline-flex;
+	flex-direction: row;
+	align-items: center;
 
-		span,
-		a,
-		.v-button {
-			display: inherit;
+	span,
+	a,
+	.v-button {
+		display: inherit;
 
-			&.order-1 {
-				order: 1;
-				margin-left: 8px;
-			}
-
-			&.-order-1 {
-				order: -1;
-				margin-right: 8px;
-			}
+		&.order-1 {
+			order: 1;
+			margin-left: 8px;
 		}
 
-		.ml-2 {
-			margin-left: 0.5rem;
-		}
-
-		:deep(.v-icon) {
-			--v-icon-size: 18px;
-			--v-icon-color: var(--border-normal-alt);
-
-			&:hover {
-				--v-icon-color: var(--primary);
-			}
-		}
-
-		.action-background {
-			background-color: var(--primary-10);
-			color: var(--primary);
-			padding: 0.5rem 1rem;
-    	border-radius: 5rem; /* arbitrary value for a nice smooth rounding */
-
-			&:hover {
-				background-color: var(--primary-25);
-			}
+		&.-order-1 {
+			order: -1;
+			margin-right: 8px;
 		}
 	}
-	
+
+	.ml-2 {
+		margin-left: 0.5rem;
+	}
+
+	:deep(.v-icon) {
+		--v-icon-size: 18px;
+		--v-icon-color: var(--border-normal-alt);
+
+		&:hover {
+			--v-icon-color: var(--primary);
+		}
+	}
+
+	.action-background {
+		background-color: var(--primary-10);
+		color: var(--primary);
+		padding: 0.5rem 1rem;
+		border-radius: 5rem;
+		/* arbitrary value for a nice smooth rounding */
+
+		&:hover {
+			background-color: var(--primary-25);
+		}
+	}
+}
 </style>

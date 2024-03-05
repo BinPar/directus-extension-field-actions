@@ -18,7 +18,6 @@ export default defineInterface({
 		const sharedOptions = getSharedConfigOptions(isStringField, collection);
 		// TODO: add custom options: softLength, clear, font
 		
-
 		const interfaceOptions = [
 			{
 				field: 'placeholder',
@@ -102,8 +101,7 @@ export default defineInterface({
 				},
 			}
 		];
-	
-	
+
 		return [
 			...interfaceOptions,
 			...(isNumericField ? numberOptions : []),
