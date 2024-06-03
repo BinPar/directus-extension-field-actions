@@ -5,8 +5,8 @@
     "host": "^9.23.1",
     "type": "bundle",
     "path": {
-      "app": "../../../extensions/directus-extension-field-actions/app.js",
-      "api": "../../../extensions/directus-extension-field-actions/api.js"
+      "app": "dist/app.js",
+      "api": "dist/api.js"
     },
     "entries": [
       {
@@ -23,8 +23,8 @@
   },
   "description": "A directus interface + display allowing custom actions like copy to clipboard and open URL's while clicking on appended / prepended buttons or the value itself (if readonly))",
   "scripts": {
-    "build": "cp ./bundle.package.json ../../../extensions/directus-extension-field-actions/package.json; directus-extension build",
-    "dev": "cp ./bundle.package.json ../../../extensions/directus-extension-field-actions/package.json; directus-extension build -w --no-minify",
+    "build": "directus-extension build",
+    "dev": "directus-extension build -w --no-minify",
     "link": "directus-extension link",
     "add": "directus-extension add",
     "test": "echo \\\"No test specified\\\" && exit 0"
