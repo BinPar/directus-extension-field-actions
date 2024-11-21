@@ -60,7 +60,6 @@
     "./**/*"
   ],
   "dependencies": {
-    "@sindresorhus/slugify": "^2.2.1",
     "lodash": "^4.17.21",
     "micromustache": "^8.0.3"
   }

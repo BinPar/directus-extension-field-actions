@@ -62,13 +62,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, ref, watch } from "vue";
-import { useClipboard } from "../shared/composable/use-clipboard";
-import { usePrefixedValues } from "../shared/composable/use-prefixed-values";
-import { useStores } from "@directus/extensions-sdk";
-import { render } from "micromustache";
-import slugify from "@sindresorhus/slugify";
-import { debounce } from "lodash";
+import { computed, inject, ref, watch } from 'vue';
+import { useClipboard } from '../shared/composable/use-clipboard';
+import { usePrefixedValues } from '../shared/composable/use-prefixed-values';
+import { useStores } from '@directus/extensions-sdk';
+import { render } from 'micromustache';
+import { debounce } from 'lodash';
 
 const props = defineProps({
   value: {
@@ -82,7 +81,7 @@ const props = defineProps({
   },
   clickAction: {
     type: String,
-    default: "default",
+    default: 'default',
   },
   showCopy: {
     type: Boolean,
@@ -90,11 +89,11 @@ const props = defineProps({
   },
   copyPosition: {
     type: String,
-    default: "end",
+    default: 'end',
   },
   copyPrefix: {
     type: String,
-    default: "",
+    default: '',
   },
   showLink: {
     type: Boolean,
@@ -102,11 +101,11 @@ const props = defineProps({
   },
   linkPosition: {
     type: String,
-    default: "end",
+    default: 'end',
   },
   linkPrefix: {
     type: String,
-    default: "",
+    default: '',
   },
   placeholder: {
     type: String,
@@ -155,8 +154,8 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["input"]);
-const values = inject("values", ref<Record<string, any>>({}));
+const emit = defineEmits(['input']);
+const values = inject('values', ref<Record<string, any>>({}));
 
 const { isCopySupported, copyToClipboard } = useClipboard();
 
@@ -167,36 +166,35 @@ watch(
   values,
   debounce((values: Record<string, any>) => {
     emitter(values);
-  }, 200)
+  }, 200),
 );
 
-function transform(value: string) {
-  return slugify(value || "", {
-    separator: "-",
-    preserveCharacters: ["?", "/", "=", ":"],
-  });
-}
+// function transform(value: string) {
+//   return slugify(value || "", {
+//     separator: "-",
+//     preserveCharacters: ["?", "/", "=", ":"],
+//   });
+// }
 
 function emitter(values: Record<string, any>) {
-  const valueRender = render(props.template || `${props.value}`, values);
-  const newValue = transform(valueRender);
+  const newValue = render(props.template || `${props.value}`, values);
 
-  if (newValue === (props.value || "")) return;
+  if (newValue === (props.value || '')) return;
 
-  if (newValue === "") {
-    emit("input", "text");
+  if (newValue === '') {
+    emit('input', 'text');
     return;
   }
 
-  emit("input", newValue);
+  emit('input', newValue);
 }
 
 const { computedLink, computedCopyValue } = usePrefixedValues(props);
 
 const inputType = computed(() => {
-  if (["bigInteger", "integer", "float", "decimal"].includes(props.type))
-    return "number";
-  return "text";
+  if (['bigInteger', 'integer', 'float', 'decimal'].includes(props.type))
+    return 'number';
+  return 'text';
 });
 
 async function copyValue() {
@@ -205,14 +203,14 @@ async function copyValue() {
 
 // TODO: move in composable (together with display)
 function valueClickAction(e: Event) {
-  if (props.clickAction === "copy" && props.disabled && props.value) {
+  if (props.clickAction === 'copy' && props.disabled && props.value) {
     e.stopPropagation();
     copyValue();
   }
 
-  if (props.clickAction === "link" && props.disabled && props.value) {
+  if (props.clickAction === 'link' && props.disabled && props.value) {
     e.stopPropagation();
-    window.open(computedLink.value, "_blank", "noopener, noreferrer");
+    window.open(computedLink.value, '_blank', 'noopener, noreferrer');
   }
 
   // else go on with the default events
@@ -220,9 +218,9 @@ function valueClickAction(e: Event) {
 
 // TODO: move in composable (together with display)
 const actionTooltip = computed(() => {
-  if (props.clickAction === "copy" && isCopySupported) return "Copy value";
-  if (props.clickAction === "link") return "Open link";
-  return "";
+  if (props.clickAction === 'copy' && isCopySupported) return 'Copy value';
+  if (props.clickAction === 'link') return 'Open link';
+  return '';
 });
 </script>
 
